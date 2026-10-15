@@ -6,7 +6,19 @@ PropertyVision is my first production system, published as the NEO Venturez prop
 
 This repository contains the full application source snapshot: the Next.js interface, API routes, Redis queue and persistence, Node.js worker, AI-backed property research, comparable-search pipeline, valuation logic, and application configuration. The code tour follows a request through the actual modules.
 
-## Start here
+## What is in this repository
+
+| Location | Current contents |
+| --- | --- |
+| [src/app/](src/app/) · [src/components/](src/components/) · [src/hooks/](src/hooks/) | Next.js pages and API routes, report components, search history, and job-progress polling. |
+| [src/server/](src/server/) | Queue, worker, research pipelines, provider clients, comparable selection, valuation, and supporting utilities. |
+| [src/contexts/](src/contexts/) · [src/services/](src/services/) · [src/types/](src/types/) | Anonymous-demo auth context, search-history service, and shared property types. |
+| [public/](public/) · [package.json](package.json) · [.env.example](.env.example) · [Dockerfile](Dockerfile) | Static assets, locked dependency setup, environment template, and container recipe. |
+| [CODE_TOUR.md](CODE_TOUR.md) · [SOURCE_MANIFEST.json](SOURCE_MANIFEST.json) · [VERIFICATION.md](VERIFICATION.md) | Request-by-request reading guide, source provenance, and recorded checks. |
+
+The snapshot includes all 80 files in the application's `src/` tree and 5 public assets. Earlier implementations and backup files are preserved alongside the current flow. The queue uses the V10 research pipeline by default; `PV_PARALLEL_SEARCH=off` selects V5 through [parallelSearchConfig.ts](src/server/utils/parallelSearchConfig.ts).
+
+## Follow an analysis through the code
 
 | Layer | Source | What to look for |
 | --- | --- | --- |
@@ -36,11 +48,17 @@ Next.js 15, React 19, TypeScript, Node.js, Redis, Google Vertex AI, and Google M
 
 ```sh
 npm ci
-npm run build
+PV_LOCAL_DEMO=true npm run build
 npm run dev
 ```
 
-The web interface runs on port 3000. A fresh analysis also needs Redis, a worker, and your own provider configuration. Review [.env.example](.env.example), configure local Redis and Google credentials, then run `RUN_WORKER=true PORT=8081 npm run worker` in a separate terminal. The Next.js process reads `.env.local`; the worker's dotenv loader reads `.env`. Keep both local files out of Git. Reading the code and running the offline checks require no provider credentials.
+The web interface runs on port 3000. A fresh analysis also needs Redis, a worker, and your own provider configuration. Review [.env.example](.env.example), configure local Redis and Google credentials, then run `RUN_WORKER=true PORT=8081 npm run worker` in a separate terminal. The Next.js process reads `.env.local`; the worker's dotenv loader reads `.env`. Keep both local files out of Git. Reading the source and running the recorded build do not require provider credentials. This repository has no `npm test` script.
+
+## Checks recorded for this snapshot
+
+The October 15, 2026 publication check completed a clean dependency install and a Next.js build. The built homepage returned HTTP 200 locally; a missing route and the disabled cache diagnostic endpoint returned HTTP 404. See [VERIFICATION.md](VERIFICATION.md) for the commands and evidence boundaries.
+
+The build skips lint and type-check failures under the inherited configuration. Standalone TypeScript and lint checks are not clean. A fresh provider-backed analysis and the Docker image were not tested for this publication; the local build does not establish those behaviors.
 
 ## Scope of this publication
 
